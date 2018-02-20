@@ -1,0 +1,84 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<title>grabWeight</title>
+</head>
+<body>
+<div style="margin: 5px 0">
+	<input id="xdDate" type="text" value="" style="width: 300px;height: 30px;vertical-align: middle;margin-bottom: 10px">
+	<input type="button" onclick="saveXdInfo(srcMain.getElementById('xdDate').value);" value="保存除权除息" style="font-size: 36px; height: 72px; ">
+</div>
+<script type="text/javascript">
+var	frmSrc=window.top.frames["frameSrc"],
+	frmMain=window.top.frames["frameMain"],
+	srcMain=frmMain.document,
+	srcDoc,
+	xdDateColIdx=12,
+	rs="",
+	today=new Date(),
+	month=today.getMonth()+1,
+	date=today.getDate();
+
+	srcMain.getElementById("xdDate").value=today.getFullYear()+(month>9?month.toString():"0"+month)+(date>9?date.toString():"0"+date);
+
+function saveStrAs(str, filename) {
+	var blob=new Blob([str],{type:'text/plain;charset=utf-8'});
+	var	URL=window.URL || URL || webkitURL,
+    	forceSaveableType = 'application/octet-stream';
+    if (blob.type && blob.type != forceSaveableType) {
+        var slice = blob.slice || blob.webkitSlice || blob.mozSlice;
+        blob = slice.call(blob, 0, blob.size, forceSaveableType);
+    }
+    var url = URL.createObjectURL(blob);
+    var link = document.createElementNS('http://www.w3.org/1999/xhtml', 'a');
+    link.href = url;
+    link.download = filename;
+    link.dispatchEvent(new MouseEvent("click"));
+    URL.revokeObjectURL(url);
+}
+function getNextPageBtn(elems) {
+	for (var i = 0; i < elems.length; i++) {
+		if(/下一页/.test(elems[i].innerText)) return elems[i];
+	}
+	return null;
+}
+function findPage(xdDate) {
+	jAjaxMain=srcDoc.getElementById("J-ajax-main");
+	waitDlg=jAjaxMain.getElementsByClassName("page-loading")[0];
+	if(/none/.test(waitDlg.style.display)) {
+		var tbl=jAjaxMain.children[1].tBodies[0],
+			tblRows=tbl.rows,iRow,
+			cellDate;
+		for (iRow = 0; iRow < tblRows.length; iRow++) {
+			cellDate=tblRows[iRow].cells[xdDateColIdx].innerText.replace(/-/g,"");
+			if(xdDate==cellDate) {
+				rs+=(tblRows[iRow].innerText+"\n");
+			} else if(xdDate>cellDate) {
+				break;
+			}
+		}
+		if(iRow<tblRows.length-1){
+			saveStrAs(rs,"xdData");
+		} else {
+			getNextPageBtn(jAjaxMain.getElementsByClassName("J-ajax-page")[0].children).click();
+			setTimeout(findPage,500,xdDate);
+		}
+	} else {
+		setTimeout(findPage,500,xdDate);
+	}
+}
+
+function saveXdInfo(xdDate){
+	var jAjaxMain,waitDlg,xdDateLink;
+	
+	srcDoc=frmSrc.document;
+	jAjaxMain=srcDoc.getElementById("J-ajax-main");
+	waitDlg=jAjaxMain.getElementsByClassName("page-loading")[0];
+	xdDateLink=jAjaxMain.children[1].children[0].rows[0].cells[xdDateColIdx].children[0];
+	xdDateLink.click();
+	setTimeout(findPage,500,xdDate);
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+#Answer Authority File Format
+#Value 0 is for no such value
+#drDate cashDividend bonusDividend allotmentRate allotmentPrice
+#               1.50         3.000         1.000           4.50
+
+20140711 200 0 0 0
+20110324 500 250 0 0
+20100504 150 3000 1000 0.4500
+20120101 
