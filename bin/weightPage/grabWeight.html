@@ -5,8 +5,13 @@
 </head>
 <body>
 <div style="margin: 5px 0">
-	<input id="xdDate" type="text" value="" style="width: 300px;height: 30px;vertical-align: middle;margin-bottom: 10px">
-	<input type="button" onclick="saveXdInfo(srcMain.getElementById('xdDate').value);" value="保存除权除息" style="font-size: 36px; height: 72px; ">
+	除权息日：<input id="xdDate" type="text" value="" style="width: 150px;height: 30px;vertical-align: middle;margin-bottom: 10px">
+	<br>
+	起始页数：<input id="pgNo" type="text" value="6" style="width: 150px;height: 30px;vertical-align: middle;margin-bottom: 10px">
+	<br>
+	<input type="button" onclick="saveXdInfo(srcMain.getElementById('xdDate').value);" value="保存除权除息" style="font-size: 36px; height: 72px;">
+	<br><br>
+	<input type="button" onclick="grabF10();" value="抓取同花顺F10" style="font-size: 36px; height: 72px;">
 </div>
 <script type="text/javascript">
 var	frmSrc=window.top.frames["frameSrc"],
@@ -29,6 +34,7 @@ function saveStrAs(str, filename) {
         var slice = blob.slice || blob.webkitSlice || blob.mozSlice;
         blob = slice.call(blob, 0, blob.size, forceSaveableType);
     }
+    console.log(str);
     var url = URL.createObjectURL(blob);
     var link = document.createElementNS('http://www.w3.org/1999/xhtml', 'a');
     link.href = url;
@@ -57,6 +63,7 @@ function findPage(xdDate) {
 				break;
 			}
 		}
+		
 		if(iRow<tblRows.length-1){
 			saveStrAs(rs,"xdData");
 		} else {
@@ -75,7 +82,7 @@ function saveXdInfo(xdDate){
 	jAjaxMain=srcDoc.getElementById("J-ajax-main");
 	waitDlg=jAjaxMain.getElementsByClassName("page-loading")[0];
 	xdDateLink=jAjaxMain.children[1].children[0].rows[0].cells[xdDateColIdx].children[0];
-	xdDateLink.click();
+	// xdDateLink.click();
 	setTimeout(findPage,500,xdDate);
 }
 
