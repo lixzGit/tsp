@@ -19,4 +19,6 @@ bin/edtHolderNum.sh < IPO
 bin/updCapChg.sh "$jobDate"
 bin/updIndex.sh sh000001
 bin/updSampleNufmDfcfwCom.sh < codeTbl.txt
+#bin/evalScore.sh -n 60 -d "$jobDate" < codeTbl.txt > "dat/Report/$jobDate"
+#awk -f bin/selectActive.awk "dat/Report/$jobDate" > "../$jobDate"
 echo "工作完成"

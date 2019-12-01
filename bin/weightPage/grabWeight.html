@@ -16,7 +16,7 @@
 <script type="text/javascript">
 var	frmSrc=window.top.frames["frameSrc"],
 	frmMain=window.top.frames["frameMain"],
-	srcMain=frmMain.document,
+	srcMain=frmMain.contentDocument,
 	srcDoc,
 	xdDateColIdx=12,
 	rs="",
@@ -78,7 +78,7 @@ function findPage(xdDate) {
 function saveXdInfo(xdDate){
 	var jAjaxMain,waitDlg,xdDateLink;
 	
-	srcDoc=frmSrc.document;
+	srcDoc=frmSrc.contentDocument;
 	jAjaxMain=srcDoc.getElementById("J-ajax-main");
 	waitDlg=jAjaxMain.getElementsByClassName("page-loading")[0];
 	xdDateLink=jAjaxMain.children[1].children[0].rows[0].cells[xdDateColIdx].children[0];
