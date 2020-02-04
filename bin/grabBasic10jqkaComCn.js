@@ -2,11 +2,11 @@ var page = require('webpage').create(),
     system = require('system'),
     args = system.args,
     fsys = require('fs'),
-    // codeTblPath = '/Users/lixz/tsp/codeTbl.txt',
     tmpPath = '/Users/lixz/tsp/tmp/10jqka',
     codes = system.stdin.read().split('\n'),
+    code = '',
     iCode = 0,
-    pgKey = args[1], 
+    pgKey = args[1],
     pgUrl = 'http://basic.10jqka.com.cn/',
     pgEvalFn, pgName,
     pgNameMap = {
@@ -15,7 +15,14 @@ var page = require('webpage').create(),
       holder: ['holder.html', evalHolderPage],
       equity: ['equity.html', evalEquityPage]
     };
+page.settings.userAgent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.4 Safari/605.1.15';
+page.settings.loadImages = false;
+page.onResourceTimeout = logError;
+page.onResourceError = logError;
 
+function logError(obj) {
+    system.stderr.writeLine(code + ':' + JSON.stringify(obj));
+}
 function evalOverviewPage() {}
 function evalHolderPage() {
   var $ = window.$, tbl = $('tbody'), dates, holderNum, holderNumChg, avgHolder, avgHolderChg, mktAvgHolder, outs = [], rowIdx, rIdx, iRow;
@@ -96,15 +103,11 @@ function evalCompanyPage() {
 }
 
 function proc() {
-  var code = codes[iCode++].trim();
+  code = codes[iCode++].trim();
   
   if (code.length > 0) {
-    pgUrl = pgUrl + code + '/' + pgName;
-
-    page.open(pgUrl, function(status) {
-      if (status !== 'success') {
-        system.stderr.writeLine(code + ' Unable to access network');
-      } else {
+    page.open(pgUrl + code + '/' + pgName, function(status) {
+      if (status == 'success') {
         var out = null, tmpCodePath = tmpPath + '/' + code + '/';
 
         if (!fsys.isDirectory(tmpCodePath)) {
@@ -116,6 +119,8 @@ function proc() {
         if (out) {
           system.stdout.write(code + '\t' + out);
         }
+      } else {
+        system.stderr.writeLine(code + ' Unable to access network');
       }
       tryNext(Math.random() * 4000);
     });
